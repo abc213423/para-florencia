@@ -11,7 +11,9 @@
 <style>
 body{
     margin:0;
-    overflow:hidden;
+    min-height:100vh;
+    overflow-x:hidden;
+    overflow-y:auto;
     font-family:'Playfair Display', serif;
     background:radial-gradient(ellipse at bottom,#1b2735 0%,#090a0f 100%);
     color:white;
@@ -68,35 +70,41 @@ canvas{
     box-shadow:0 0 20px rgba(255,92,138,.5);
 }
 
-.gallery img:hover{
-    transform:scale(1.05);
+.gallery img.show:hover{
+    transform:translateY(0) scale(1.05);
 }
 
 #mainContent{
     display:none;
-    height:100vh;
-    justify-content:center;
+    min-height:100vh;
+    justify-content:flex-start;
     align-items:center;
     flex-direction:column;
-    text-align:center;
-    padding:20px;
+    padding:25px 15px 60px;
+    box-sizing:border-box;
 }
 
 #text{
-    font-size:clamp(1.4rem,4vw,2rem);
+    font-size:clamp(1.2rem,4vw,2rem);
     max-width:800px;
-    min-height:120px;
+    width:100%;
+    line-height:1.5;
+    margin-bottom:20px;
+    text-align:center;
 }
 
 #contador{
     margin-top:25px;
+    margin-bottom:40px;
     font-size:1.4rem;
     display:none;
     line-height:1.7;
 }
 
 .gallery{
-    margin-top:30px;
+    margin-top:10px;
+    margin-bottom:40px;
+    max-width:700px;
     display:none;
     flex-wrap:wrap;
     justify-content:center;
@@ -120,9 +128,39 @@ canvas{
 }
 
 #final{
+    margin-top:40px;
+    padding-bottom:50px;
     display:none;
     text-align:center;
     animation:fadeIn 3s ease forwards;
+}
+
+@media (max-width:768px){
+
+    #text{
+        font-size:1.1rem;
+        line-height:1.6;
+        min-height:auto;
+    }
+
+    #contador{
+        font-size:1rem;
+    }
+
+    .gallery{
+        gap:10px;
+    }
+
+    .gallery img{
+        width:42%;
+        max-width:130px;
+        border-radius:15px;
+    }
+
+    #af{
+        font-size:4rem;
+    }
+
 }
 
 @keyframes fadeIn{
@@ -395,11 +433,12 @@ function siguienteTexto(){
                 textoActual++;
 
                 if(textoActual === 1){
+    iniciarContador();
+}
 
-                    iniciarContador();
-                    mostrarFotos();
-
-                }
+if(textoActual === 2){
+    mostrarFotos();
+}
 
                 siguienteTexto();
 
