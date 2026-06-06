@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Para Florencia ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    min-height:100vh;
+    overflow-x:hidden;
+    overflow-y:auto;
+    font-family:'Playfair Display', serif;
+    background:radial-gradient(ellipse at bottom,#1b2735 0%,#090a0f 100%);
+    color:white;
+}
+
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:-2;
+}
+
+#startScreen h1{
+    color:white;
+}
+
+#startScreen{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    background:radial-gradient(
+        ellipse at bottom,
+        #1b2735 0%,
+        #090a0f 100%
+    );
+    z-index:100;
+}
+
+#startBtn{
+    padding:15px 30px;
+    border:none;
+    border-radius:50px;
+    font-size:1.2rem;
+    cursor:pointer;
+    background:#ff5c8a;
+    color:white;
+    transition:.3s;
+}
+
+#startBtn:hover{
+    transform:scale(1.1);
+}
+
+#startBtn{
+    box-shadow:0 0 20px rgba(255,92,138,.5);
+}
+
+.gallery img.show:hover{
+    transform:translateY(0) scale(1.05);
+}
+
+#mainContent{
+    display:none;
+    min-height:100vh;
+    justify-content:flex-start;
+    align-items:center;
+    flex-direction:column;
+    padding:25px 15px 60px;
+    box-sizing:border-box;
+}
+
+#text{
+    font-size:clamp(1.2rem,4vw,2rem);
+    max-width:800px;
+    width:100%;
+    line-height:1.5;
+    margin-bottom:20px;
+    text-align:center;
+}
+
+#contador{
+    margin-top:25px;
+    margin-bottom:40px;
+    font-size:1.4rem;
+    display:none;
+    line-height:1.7;
+}
+
+.gallery{
+    margin-top:10px;
+    margin-bottom:40px;
+    max-width:700px;
+    display:none;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:15px;
+}
+
+.gallery img{
+    width:220px;
+    max-width:40vw;
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(255,255,255,.3);
+
+    opacity:0;
+    transform:translateY(20px);
+    transition:all 1.5s ease;
+}
+
+.gallery img.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+#final{
+    margin-top:40px;
+    padding-bottom:50px;
+    display:none;
+    text-align:center;
+    animation:fadeIn 3s ease forwards;
+}
+
+@media (max-width:768px){
+
+    #text{
+        font-size:1.1rem;
+        line-height:1.6;
+        min-height:auto;
+    }
+
+    #contador{
+        font-size:1rem;
+    }
+
+    .gallery{
+        gap:10px;
+    }
+
+    .gallery img{
+        width:42%;
+        max-width:130px;
+        border-radius:15px;
+    }
+
+    #af{
+        font-size:4rem;
+    }
+
+}
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+#af{
+    font-size:clamp(4rem,10vw,9rem);
+    opacity:.25;
+    text-shadow:
+        0 0 15px rgba(255,120,180,.8),
+        0 0 30px rgba(255,120,180,.5);
+}
+
+.heart{
+    position:fixed;
+    color:#ff6b9d;
+    animation:floatUp linear forwards;
+}
+
+@keyframes floatUp{
+    from{
+        transform:translateY(100vh);
+        opacity:1;
+    }
+    to{
+        transform:translateY(-20vh);
+        opacity:0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+    <canvas id="stars"></canvas>
+
+<div id="startScreen">
+    <h1>❤️ Para Florencia ❤️</h1>
+    <button id="startBtn">Abrir Carta</button>
+</div>
+
+<div id="mainContent">
+
+    <div id="text"></div>
+
+    <div id="contador"></div>
+
+    <div class="gallery" id="gallery">
+        <img src="imagenes/foto1.jpg">
+        <img src="imagenes/foto2.jpg">
+        <img src="imagenes/foto3.jpg">
+        <img src="imagenes/foto4.jpg">
+    </div>
+
+    <div id="final">
+        <div id="af">💞 A + F 💞</div>
+        <h2>Gracias por ser la mejor parte de mi vida.</h2>
+        <h2>Te amo, Florencia ❤️</h2>
+    </div>
+
+</div>
+
+<audio id="music" loop>
+    <source src="musica.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const startBtn = document.getElementById("startBtn");
+const startScreen = document.getElementById("startScreen");
+const mainContent = document.getElementById("mainContent");
+const music = document.getElementById("music");
+
+const textElement = document.getElementById("text");
+const contador = document.getElementById("contador");
+const galeria = document.getElementById("gallery");
+const finalDiv = document.getElementById("final");
+
+const textos = [
+    "Hola mi niñaaa, espero que se encuentre muy bien este día, el siguiente mensaje es para usted:",
+
+    "Gracias por demostrarme lo que es ser una buena persona, gracias por mostrarme lo que es y significa el amor, gracias por estar siempre ahí para mí y por tantos momentos juntos. Gracias por todo lo que ha hecho por mí en estos 10 meses. Te amo mucho 💞",
+
+    "Gracias por ser la mejor parte de mi vida. Te amo, Florencia ❤️"
+];
+
+let textoActual = 0;
+
+// =======================
+// EFECTO MAQUINA DE ESCRIBIR
+// =======================
+
+function escribirTexto(texto, indice, callback){
+
+    if(indice < texto.length){
+
+        textElement.innerHTML =
+            texto.substring(0, indice + 1);
+
+        setTimeout(() => {
+
+            escribirTexto(
+                texto,
+                indice + 1,
+                callback
+            );
+
+        }, 45);
+
+    }else{
+
+        setTimeout(() => {
+
+            if(callback){
+                callback();
+            }
+
+        }, 4000);
+
+    }
+
+}
+
+// =======================
+// CONTADOR
+// =======================
+
+function iniciarContador(){
+
+    contador.style.display = "block";
+
+    const fechaInicio =
+        new Date("2025-07-13T12:00:00");
+
+    function actualizar(){
+
+        const ahora = new Date();
+
+        let diferencia =
+            ahora - fechaInicio;
+
+        const dias =
+            Math.floor(
+                diferencia /
+                (1000 * 60 * 60 * 24)
+            );
+
+        diferencia %=
+            (1000 * 60 * 60 * 24);
+
+        const horas =
+            Math.floor(
+                diferencia /
+                (1000 * 60 * 60)
+            );
+
+        diferencia %=
+            (1000 * 60 * 60);
+
+        const minutos =
+            Math.floor(
+                diferencia /
+                (1000 * 60)
+            );
+
+        diferencia %=
+            (1000 * 60);
+
+        const segundos =
+            Math.floor(
+                diferencia / 1000
+            );
+
+        contador.innerHTML = `
+        ❤️ Llevamos juntos ❤️<br><br>
+        ${dias} días<br>
+        ${horas} horas<br>
+        ${minutos} minutos<br>
+        ${segundos} segundos
+        `;
+    }
+
+    actualizar();
+    setInterval(actualizar, 1000);
+
+}
+
+// =======================
+// FOTOS
+// =======================
+
+function mostrarFotos(){
+
+    galeria.style.display = "flex";
+
+    const fotos =
+        galeria.querySelectorAll("img");
+
+    fotos.forEach((foto, index) => {
+
+        setTimeout(() => {
+
+            foto.classList.add("show");
+
+        }, index * 800);
+
+    });
+
+}
+
+// =======================
+// CORAZONES
+// =======================
+
+function crearCorazon(){
+
+    const heart =
+        document.createElement("div");
+
+    heart.classList.add("heart");
+
+    heart.innerHTML = "❤️";
+
+    heart.style.left =
+        Math.random() * 100 + "vw";
+
+    heart.style.fontSize =
+        (15 + Math.random() * 25) + "px";
+
+    heart.style.animationDuration =
+        (6 + Math.random() * 4) + "s";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+
+        heart.remove();
+
+    }, 10000);
+
+}
+
+setInterval(crearCorazon, 600);
+
+// =======================
+// MENSAJES
+// =======================
+
+function siguienteTexto(){
+
+    if(textoActual < textos.length){
+
+        textElement.innerHTML = "";
+
+        escribirTexto(
+            textos[textoActual],
+            0,
+            () => {
+
+                textoActual++;
+
+                if(textoActual === 1){
+    iniciarContador();
+}
+
+if(textoActual === 2){
+    mostrarFotos();
+}
+
+                siguienteTexto();
+
+            }
+        );
+
+    }else{
+
+        textElement.style.display =
+            "none";
+
+        finalDiv.style.display =
+            "block";
+
+    }
+
+}
+
+// =======================
+// BOTON INICIO
+// =======================
+
+startBtn.addEventListener(
+    "click",
+    () => {
+
+        startScreen.style.display =
+            "none";
+
+        mainContent.style.display =
+            "flex";
+
+        music.play();
+
+        siguienteTexto();
+
+    }
+);
+
+// =======================
+// ESTRELLAS
+// =======================
+
+const canvas =
+    document.getElementById("stars");
+
+const ctx =
+    canvas.getContext("2d");
+
+let stars = [];
+
+function resizeCanvas(){
+
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
+
+    stars = [];
+
+    for(let i = 0; i < 250; i++){
+
+        stars.push({
+
+            x:
+                Math.random() *
+                canvas.width,
+
+            y:
+                Math.random() *
+                canvas.height,
+
+            r:
+                Math.random() * 2,
+
+            speed:
+                Math.random() * 0.5 + 0.1
+
+        });
+
+    }
+
+}
+
+function animateStars(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.fillStyle = "white";
+
+    stars.forEach(star => {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            star.x,
+            star.y,
+            star.r,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        star.y += star.speed;
+
+        if(star.y > canvas.height){
+
+            star.y = 0;
+            star.x =
+                Math.random() *
+                canvas.width;
+
+        }
+
+    });
+
+    requestAnimationFrame(
+        animateStars
+    );
+
+}
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+resizeCanvas();
+animateStars();
+</script>
+
+</body>
+</html>
